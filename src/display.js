@@ -32,7 +32,7 @@ export default (() => {
     const displayProject = ((project) => {
         const taskList = document.querySelector("div.list");
         taskList.innerHTML = "";
-        taskList.id = project.name;
+        taskList.dataset.id = project._id;
         project.getTasks().forEach(task => {
             const taskDisplay = displayTask(task);
             taskList.appendChild(taskDisplay);
@@ -48,7 +48,6 @@ export default (() => {
         // Event listener to change the checkbox
         taskCheckbox.addEventListener("click", () => {
             task.toggleCheckbox();
-            console.log(task)
             taskCheckbox.textContent = task._checkbox; // THIS TOOOOOOOOOOOOOOOOOO
         })
 
@@ -117,13 +116,19 @@ export default (() => {
         const projects = document.querySelector("div.projects");
         const newProject = document.createElement("div");
         newProject.classList = "project";
+        newProject.dataset.id = project._id;
         const projectName = document.createElement("span");
         projectName.textContent = project.name;
         
         // Show project
         projectName.addEventListener("click", () => displayProject(project));
-
+        
         newProject.appendChild(projectName);
+
+        // Add display of number of tasks in the project
+        const number = document.createElement("div");
+        number.classList = "number";
+        newProject.appendChild(number);
 
         // Button to remove project
         if (project.name !== "Inbox" && project.name !== "Today" && project.name !== "Week") {
@@ -148,9 +153,15 @@ export default (() => {
 
     const getCurrentProject = (() => {
         const list = document.querySelector("div.list");
-        const name = list.id;
-        const project = projectList.getProject(name);
+        const id = list.dataset.id;
+        const project = projectList.getProject(id);
         return project;
+    })
+
+    // Add a number of tasks to each project in the sidebar
+    const addProjectTaskNumber = ((project) => {
+        const number = document.querySelector(`.projects [data-id="${project._id}"] .number`);
+        number.textContent = project.getTasks().length;
     })
 
     // Tasks
@@ -197,12 +208,16 @@ export default (() => {
     const addTaskProject = ((task, scope) => {
         const inbox = projectList.getList()[0];
         inbox.addTask(task);
+        addProjectTaskNumber(inbox);
 
         if (scope === "global") return;
 
-        const currentProject = getCurrentProject();
-        if (currentProject !== inbox) currentProject.addTask(task);
-        displayProject(currentProject);    
+        const projectCurrent = getCurrentProject();
+        if (projectCurrent !== inbox) {
+            projectCurrent.addTask(task);
+            addProjectTaskNumber(projectCurrent);
+        }
+        displayProject(projectCurrent);
     })
 
     const removeTask = ((task) => {
@@ -212,13 +227,15 @@ export default (() => {
         if (inbox !== projectCurrent) {
             inbox.removeTask(task);
             projectCurrent.removeTask(task);
+            addProjectTaskNumber(inbox);
+            addProjectTaskNumber(projectCurrent);
             return
         }
 
         for (const project of projectList.getList()) {
-            //console.log(project.getTasks());
             if (project.getTasks().find(item => item === task)) {
                 project.removeTask(task);
+                addProjectTaskNumber(project);
             }
         }
     })
@@ -279,5 +296,5 @@ export default (() => {
         return newForm;
     })
 
-    return {addProjectNav, displayProject};
+    return {addProjectNav, displayProject, addProjectTaskNumber};
 })();

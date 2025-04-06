@@ -1,5 +1,8 @@
+import {v4 as uuid4} from "uuid";
+
 class Project {
     constructor(name) {
+        this._id = uuid4();
         this._name = name;
         this._tasks = [];
     }
@@ -33,8 +36,8 @@ const projectList = (() => {
         return list;
     })
 
-    const getProject = ((name) => {
-        const project = list.find(projNow => projNow.name === name)
+    const getProject = ((id) => {
+        const project = list.find(projNow => projNow._id === id)
         return project;
     })
 

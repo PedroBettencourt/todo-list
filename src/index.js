@@ -1,5 +1,5 @@
 import "./style.css"
-import {Project, projectList} from "./project.js";
+import {Project} from "./project.js";
 import Task from "./task.js";
 import display from "./display.js";
 
@@ -31,5 +31,9 @@ projToday.addTask(taskOne);
 
 projInbox.addTask(taskTwo);
 projWeek.addTask(taskTwo);
+
+display.addProjectTaskNumber(projInbox);
+display.addProjectTaskNumber(projToday);
+display.addProjectTaskNumber(projWeek);
 
 display.displayProject(projInbox);
