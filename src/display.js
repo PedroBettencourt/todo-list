@@ -15,8 +15,9 @@ export default (() => {
     // Button to add a task
     const btnTask = document.querySelectorAll("button.task");
     btnTask.forEach(btn => btn.addEventListener("click", (e) => {
-        e.stopImmediatePropagation()
-        const form = addTaskForm();
+        e.stopImmediatePropagation();
+        const scope = btn.id;
+        const form = addTaskForm(scope);
         window.addEventListener("click", (e) => closeWindow(e, form));
     }));
 
@@ -43,7 +44,13 @@ export default (() => {
         taskDisplay.classList = "task";
 
         const taskCheckbox = document.createElement("button");
-        taskCheckbox.classList = "checkbox";
+        taskCheckbox.textContent = task._checkbox; //IMPROVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!
+        // Event listener to change the checkbox
+        taskCheckbox.addEventListener("click", () => {
+            task.toggleCheckbox();
+            console.log(task)
+            taskCheckbox.textContent = task._checkbox; // THIS TOOOOOOOOOOOOOOOOOO
+        })
 
         const taskText = document.createElement("div");
         taskText.textContent = task.title;
@@ -58,7 +65,7 @@ export default (() => {
         })
 
         // Click task to show more information
-        taskDisplay.addEventListener("click", (e) => {
+        taskText.addEventListener("click", (e) => {
             e.stopPropagation();
             showTask(task);
         });
@@ -147,7 +154,7 @@ export default (() => {
     })
 
     // Tasks
-    const addTaskForm = (() => {               
+    const addTaskForm = ((scope) => {               
         let newForm = document.createElement("form");
         newForm = addFormElement(newForm, "input", "title", "text");
         newForm = addFormElement(newForm, "input", "description", "text");
@@ -164,9 +171,10 @@ export default (() => {
             const description = values[1].value;
             const date = values[2].value;
             const priority = document.querySelector("select").value;
+            const checkbox = false;
             if(title) {
-                const task = new Task(title, description, date, priority);
-                addTaskProject(task);
+                const task = new Task(title, description, date, priority, checkbox);
+                addTaskProject(task, scope);
             }
             newForm.remove();
         });
@@ -186,11 +194,13 @@ export default (() => {
         return newForm;
     })
 
-    const addTaskProject = ((task) => {
+    const addTaskProject = ((task, scope) => {
         const inbox = projectList.getList()[0];
-        const currentProject = getCurrentProject();
-
         inbox.addTask(task);
+
+        if (scope === "global") return;
+
+        const currentProject = getCurrentProject();
         if (currentProject !== inbox) currentProject.addTask(task);
         displayProject(currentProject);    
     })
