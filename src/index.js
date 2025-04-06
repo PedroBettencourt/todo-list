@@ -20,11 +20,11 @@ const projRandom = new Project("Random");
 display.addProjectNav(projRandom);
 
 // New random tasks
-const taskOne = new Task("fazer x", "x e y", "05 de abril", "low", false);
+const taskOne = new Task("Do something", "Something and another thing", "06-05-2025", "medium", false);
 taskOne.title = "Do this task";
 taskOne.toggleCheckbox();
 
-const taskTwo = new Task("Do y", "somethingsoemthing", "June 2nd", "high", false);
+const taskTwo = new Task("Do another thing", "Something important probably", "07-04-2025", "high", false);
 
 projInbox.addTask(taskOne);
 projToday.addTask(taskOne);

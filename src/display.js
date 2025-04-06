@@ -2,6 +2,7 @@ import {Project, projectList} from "./project.js";
 import Task from "./task.js";
 import deleteImg from "./images/delete.svg";
 import closeImg from "./images/close.svg";
+import { differenceInDays, startOfToday, parse} from "date-fns";
 
 export default (() => {
 
@@ -216,7 +217,7 @@ export default (() => {
             const title = values[0].value;
             const date = values[1].value;
             const priority = document.querySelector("select").value;
-            const description = values[2].value;
+            const description = document.querySelector("textarea").value;
             const checkbox = false;
             if(title) {
                 const task = new Task(title, description, date, priority, checkbox);
@@ -315,7 +316,9 @@ export default (() => {
         title.textContent = task.title;
         details.appendChild(title)
 
-        const dueDate = addPropertyShowTask("Due Date:", task.dueDate);
+        const today = startOfToday();
+        const date = differenceInDays(task.dueDate, today);
+        const dueDate = addPropertyShowTask("Due Date:", date + " days");
         details.appendChild(dueDate);
 
         const priority = addPropertyShowTask("Priority:", task.priority);

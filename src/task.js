@@ -5,7 +5,7 @@ export default class Task {
         this._id = uuid4();
         this._title = title;
         this._description = description;
-        this._dueDate = dueDate;
+        this._dueDate = new Date(dueDate);
         this._priority = priority;
         this._checkbox = checkbox;
         //this.notes = notes;
@@ -32,7 +32,7 @@ export default class Task {
     }
 
     set dueDate(dueDateNew) {
-        this._dueDate = dueDateNew;
+        this._dueDate = new Date(dueDateNew);
     }
 
     get priority() {
