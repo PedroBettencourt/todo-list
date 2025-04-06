@@ -1,6 +1,7 @@
 import {Project, projectList} from "./project.js";
 import Task from "./task.js";
 import deleteImg from "./images/delete.svg";
+import closeImg from "./images/close.svg";
 
 export default (() => {
 
@@ -8,17 +9,27 @@ export default (() => {
     const btnProject = document.querySelector("button.project");
     btnProject.addEventListener("click", (e) => {
         e.stopPropagation();
-        const form = addProjectForm();
-        window.addEventListener("click", (e) => closeWindow(e, form));
+
+        // Close an already open form
+        const oldCard = document.querySelector(".card")
+        if (oldCard) oldCard.remove();
+
+        const card = addProjectForm();
+        window.addEventListener("click", (e) => closeWindow(e, card));
     });
 
     // Button to add a task
     const btnTask = document.querySelectorAll("button.task");
     btnTask.forEach(btn => btn.addEventListener("click", (e) => {
-        e.stopImmediatePropagation();
+        e.stopPropagation();
+        
+        // Close an already open form
+        const oldCard = document.querySelector(".card")
+        if (oldCard) oldCard.remove();
+
         const scope = btn.id;
-        const form = addTaskForm(scope);
-        window.addEventListener("click", (e) => closeWindow(e, form));
+        const card = addTaskForm(scope);
+        window.addEventListener("click", (e) => closeWindow(e, card));
     }));
 
     // Close form if clicked outside
@@ -42,16 +53,19 @@ export default (() => {
     const displayTask = ((task) => {
         const taskDisplay = document.createElement("div");
         taskDisplay.classList = "task";
+        if (task._checkbox) taskDisplay.classList.toggle("checked");
 
-        const taskCheckbox = document.createElement("button");
-        taskCheckbox.textContent = task._checkbox; //IMPROVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!
+        const taskCheckbox = document.createElement("div");
+        taskCheckbox.classList.add("checkbox");
+
         // Event listener to change the checkbox
         taskCheckbox.addEventListener("click", () => {
             task.toggleCheckbox();
-            taskCheckbox.textContent = task._checkbox; // THIS TOOOOOOOOOOOOOOOOOO
+            taskDisplay.classList.toggle("checked")
         })
 
         const taskText = document.createElement("div");
+        taskText.classList = "task-content"
         taskText.textContent = task.title;
 
         // Button to delete task
@@ -78,8 +92,12 @@ export default (() => {
 
     // Projects
     const addProjectForm = (() => {
+        const card = document.createElement("div");
+        card.classList = "card";
+
         let newForm = document.createElement("form");
-        newForm = addFormElement(newForm, "input", "name", "text");
+        newForm.classList = "project-form";
+        newForm = addFormElement(newForm, "input", "name", "text", "Project Name:");
 
         // Submit form button
         const formSubmit = document.createElement("button");
@@ -97,17 +115,18 @@ export default (() => {
         newForm.appendChild(formSubmit);
 
         // Close form button
-        const formCloseBtn = document.createElement("button");
+        const formCloseBtn = document.createElement("img");
         formCloseBtn.classList = "close";
-        formCloseBtn.textContent = "Close";
+        formCloseBtn.src = closeImg;
         formCloseBtn.addEventListener("click", () => {
             newForm.remove();
         })
         newForm.appendChild(formCloseBtn)
 
-        document.body.appendChild(newForm);
+        card.appendChild(newForm);
+        document.body.appendChild(card);
 
-        return newForm
+        return card;
     })
 
     const addProjectNav = ((project) => {
@@ -121,7 +140,11 @@ export default (() => {
         projectName.textContent = project.name;
         
         // Show project
-        projectName.addEventListener("click", () => displayProject(project));
+        projectName.addEventListener("click", () => {
+            // Make project in sidebar be selected
+            selectProject(projectName);
+            displayProject(project);
+        });
         
         newProject.appendChild(projectName);
 
@@ -146,6 +169,14 @@ export default (() => {
         projects.appendChild(newProject);
     })
 
+    const selectProject = ((project) => {
+        const projectSelected = document.querySelector(".selected");
+        if (projectSelected) {
+            projectSelected.classList.toggle("selected");
+        }
+        project.classList.toggle("selected");
+    })
+
     const deleteProject = ((project) => {
         projectList.removeProject(project);
         displayProject(projectList.getList()[0]);
@@ -165,12 +196,16 @@ export default (() => {
     })
 
     // Tasks
-    const addTaskForm = ((scope) => {               
+    const addTaskForm = ((scope) => {       
+        const card = document.createElement("div");
+        card.classList = "card";
+
         let newForm = document.createElement("form");
-        newForm = addFormElement(newForm, "input", "title", "text");
-        newForm = addFormElement(newForm, "input", "description", "text");
-        newForm = addFormElement(newForm, "input", "date", "date");
-        newForm = addFormElement(newForm, "select", "priority");
+        newForm.classList = "task-form";
+        newForm = addFormElement(newForm, "input", "title", "text", "Task:");
+        newForm = addFormElement(newForm, "input", "date", "date", "Due date:");
+        newForm = addFormElement(newForm, "select", "priority", "", "Priority:");
+        newForm = addFormElement(newForm, "textarea", "description", "", "Description:");
 
         // Submit form button
         const formSubmit = document.createElement("button");
@@ -179,9 +214,9 @@ export default (() => {
             e.preventDefault();
             const values = document.querySelectorAll("input");
             const title = values[0].value;
-            const description = values[1].value;
-            const date = values[2].value;
+            const date = values[1].value;
             const priority = document.querySelector("select").value;
+            const description = values[2].value;
             const checkbox = false;
             if(title) {
                 const task = new Task(title, description, date, priority, checkbox);
@@ -192,32 +227,40 @@ export default (() => {
         newForm.appendChild(formSubmit);
 
         // Close form button
-        const formCloseBtn = document.createElement("button");
+        const formCloseBtn = document.createElement("img");
         formCloseBtn.classList = "close";
-        formCloseBtn.textContent = "Close";
+        formCloseBtn.src = closeImg
         formCloseBtn.addEventListener("click", () => {
             newForm.remove();
         })
         newForm.appendChild(formCloseBtn)
 
-        document.body.appendChild(newForm);
+        card.appendChild(newForm);
+        document.body.appendChild(card);
 
-        return newForm;
+        return card;
     })
 
     const addTaskProject = ((task, scope) => {
         const inbox = projectList.getList()[0];
         inbox.addTask(task);
         addProjectTaskNumber(inbox);
-
-        if (scope === "global") return;
+        
+        if (scope === "global") {
+            const displayedProject = document.querySelector(`[data-id="${inbox._id}"]`);
+            selectProject(displayedProject.firstChild);
+            displayProject(inbox);
+            return;
+        }
 
         const projectCurrent = getCurrentProject();
         if (projectCurrent !== inbox) {
             projectCurrent.addTask(task);
             addProjectTaskNumber(projectCurrent);
+            displayProject(projectCurrent);
+        } else {
+            displayProject(inbox);
         }
-        displayProject(projectCurrent);
     })
 
     const removeTask = ((task) => {
@@ -240,39 +283,65 @@ export default (() => {
         }
     })
 
+    const addPropertyShowTask = ((taskPropertyTitle, taskProperty) => {
+        const propertyContainer = document.createElement("div");
+        propertyContainer.classList = "task-property";
+        
+        const propertyTitle = document.createElement("div");
+        propertyTitle.textContent = taskPropertyTitle;
+
+        const property = document.createElement("div");
+        property.textContent = taskProperty;
+
+        propertyContainer.appendChild(propertyTitle);
+        propertyContainer.appendChild(property);
+
+        return propertyContainer;
+    })
+
     const showTask = ((task) => {
+        // Remove old card with task details
+        const cardOld = document.querySelector(".card");
+        if (cardOld) cardOld.remove();
+
         const card = document.createElement("div");
         card.classList = "card";
         window.addEventListener("click", (e) => closeWindow(e, card));
 
+        const details = document.createElement("div");
+        details.classList = "details";
+
         const title = document.createElement("div");
         title.textContent = task.title;
-        const description = document.createElement("div");
-        description.textContent = task.description;
-        const dueDate = document.createElement("div");
-        dueDate.textContent = task.dueDate;
-        const priority = document.createElement("div");
-        priority.textContent = task.priority;
+        details.appendChild(title)
 
-        const closeBtn = document.createElement("button");
+        const dueDate = addPropertyShowTask("Due Date:", task.dueDate);
+        details.appendChild(dueDate);
+
+        const priority = addPropertyShowTask("Priority:", task.priority);
+        details.appendChild(priority);
+
+        const description = addPropertyShowTask("Description:", task.description);
+        details.appendChild(description);
+
+        const closeBtn = document.createElement("img");
         closeBtn.classList = "close";
-        closeBtn.textContent = "X";
+        closeBtn.src = closeImg;
         closeBtn.addEventListener("click", () => {
             card.remove();
         })
-        
-        card.appendChild(title);
-        card.appendChild(description);
-        card.appendChild(dueDate);
-        card.appendChild(priority);
-        card.appendChild(closeBtn);
+        details.appendChild(closeBtn);
+
+        card.appendChild(details)
         document.body.appendChild(card);
     })
 
-    const addFormElement = ((newForm, format, property, type) => {
+    const addFormElement = ((newForm, format, property, type, title) => {
+        const formContainer = document.createElement("div");
+
         const formElementLabel = document.createElement("label");
         formElementLabel.setAttribute("for", property);
-        formElementLabel.textContent = property;
+        formElementLabel.textContent = title;
 
         const formElement = document.createElement(format);
         formElement.setAttribute("id", property);
@@ -280,7 +349,9 @@ export default (() => {
 
         if (format === "input") {
             formElement.setAttribute("type", type);
-            
+            if (property === "title") formElement.setAttribute("maxlength", "40");
+            if (property === "name") formElement.setAttribute("maxlength", "15");
+
         } else if (format === "select") {
             const options = ["low", "medium", "high"];
             for (let i=0; i<3; i++) {
@@ -291,8 +362,9 @@ export default (() => {
             }
         }
 
-        newForm.appendChild(formElementLabel);
-        newForm.appendChild(formElement);
+        formContainer.appendChild(formElementLabel);
+        formContainer.appendChild(formElement);
+        newForm.appendChild(formContainer);
         return newForm;
     })
 

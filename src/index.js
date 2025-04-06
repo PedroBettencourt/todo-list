@@ -19,7 +19,7 @@ display.addProjectNav(projWeek);
 const projRandom = new Project("Random");
 display.addProjectNav(projRandom);
 
-// New todo
+// New random tasks
 const taskOne = new Task("fazer x", "x e y", "05 de abril", "low", false);
 taskOne.title = "Do this task";
 taskOne.toggleCheckbox();
@@ -37,3 +37,5 @@ display.addProjectTaskNumber(projToday);
 display.addProjectTaskNumber(projWeek);
 
 display.displayProject(projInbox);
+const inbox = document.querySelector("span");
+inbox.classList.toggle("selected");

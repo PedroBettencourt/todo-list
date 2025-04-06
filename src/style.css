@@ -1,21 +1,29 @@
 :root {
     --pad: 20px;
-    --blue: rgb(170, 230, 250);
-    --blue-hover: rgb(150, 210, 250);
+    --nav: #FFE3E1;
+    --nav-hover: #FFD1D1;
+    --buttons: #FFA0A0;
+    --buttons-hover: #FF9494;
+    --items: #FFF5E4;
 }
 
 html, body {
     font-family: Helvetica, sans-serif;
     height: 100%;
+    width: 100%;
     margin: 0;
     display: flex;
+    overflow: auto;
+    overscroll-behavior-block: contain;
 }
+
+/* Sidebar */
 
 nav {
     height: 100%;
     width: 15rem;
     padding: var(--pad);
-    background-color: var(--blue);
+    background-color: var(--nav);
 }
 
 div.projects {
@@ -24,19 +32,26 @@ div.projects {
 
 div.project {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 div.project > span {
     padding: 10px;
     width: 80%;
     border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
 }
 
 div.project > span:hover {
-    background-color: var(--blue-hover);
+    background-color: var(--nav-hover);
     cursor: pointer;
+}
+
+div.project > .selected {
+    background-color: var(--nav-hover);
 }
 
 img.delete {
@@ -46,41 +61,185 @@ img.delete {
 
 img.delete:hover {
     width: 22px;
+    right: 2px;
 }
 
-div.content-tasks {
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+button.project, 
+button.task {
+    width: 7em;
+    height: 3em;
+    appearance: none;
+    border: 1px solid gray;
+    border-radius: 10px;
+    background-color: var(--buttons);
+}
+
+button.project:hover,
+button.task:hover {
+    cursor: pointer;
+    background-color: var(--buttons-hover);
+}
+
+
+/* Content Tasks */
+
+.content-tasks {
     padding: var(--pad);
+    height: 100%;
+    flex: 1;
+    background-color: var(--items);
 }
 
 div.task {
     margin-top: 20px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--nav);
+    width: 30em;
+    height: 1.7em;
+    border-radius: 10px;
+}
+
+div.task:hover {
+    box-shadow: 0 0 5px 1px lightgray;
+}
+
+.checkbox {
+    width: 1.3em;
+    height: 1.3em;
+    background-color: white;
+    border-radius: 3px;
+}
+
+.checkbox:hover {
+    cursor: pointer;
+}
+
+.checked .checkbox::after {
+    content: "✓";
+    position: relative;
+    left: 4px;
+    bottom: 2px;
+    font-size: 1.2em;
+}
+
+.task-content {
+    flex: 1;
+    font-size: 1.1em;
+    padding: 10px;
+}
+
+.task-content:hover {
+    cursor: pointer;
+}
+
+.checked .task-content {
+    text-decoration: line-through;
+    color: gray;
+}
+
+
+/* Task details */
+
+.card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.details {
+    width: 30em;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--nav-hover);
+    box-shadow: 0 0 5px 1px lightgray;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.details > div:first-child {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.task-property {
+    display: flex;
+    gap: 0.4em;
+}
+
+.task-property > div:first-child {
+    font-weight: bold;
+}
+
+.task-property > div:last-child{
+    word-break: break-all;
+}
+
+img.close {
+    position: absolute;
+    left: 90%;
+    top: 6%;
+    width: 40px;
+    height: 40px;
+}
+
+/* Forms */
+
+form {
+    width: 30em;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--nav-hover);
+    box-shadow: 0 0 5px 1px lightgray;
+}
+
+form div {
+    margin-bottom: 20px;
     display: flex;
     gap: 10px;
 }
 
-form {
-    position: absolute;
-    left: 50%;
-    top: 50%;
+form label {
+    font-weight: bold;
+}
+
+form input {
+    width: 25em;
+}
+
+form input#name {
     width: 20em;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: gray;
+}
+
+form input[type="date"] {
+    width: 9em;
+}
+
+form textarea {
+    width: 25em;
+}
+
+
+form button {
+    width: 10em;
+    height: 2em;
+    align-self: center;
+}
+
+form input[type="textarea"] {
+    height: 7em;
 }
 
 form > input {
-    flex: 1;
-}
-
-div.card {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 20em;
-    height: 10em;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: gray;
+    
 }
