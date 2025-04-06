@@ -1,7 +1,7 @@
-export default class Project {
+class Project {
     constructor(name) {
         this._name = name;
-        this.items = [];
+        this._tasks = [];
     }
 
     get name() {
@@ -12,16 +12,42 @@ export default class Project {
         this._name = nameNew;
     }
 
-    addTodo(todo) {
-        this.items.push(todo);
+    addTask(todo) {
+        this._tasks.push(todo);
     }
 
-    removeTodo(todo) {
-        const index = this.items.indexOf(todo);
-        if (index > -1) this.items.splice(index, 1);
+    removeTask(todo) {
+        const index = this._tasks.indexOf(todo);
+        if (index > -1) this._tasks.splice(index, 1);
     }
 
-    getTodos() {
-        return this.items;
+    getTasks() {
+        return this._tasks;
     }
 }
+
+const projectList = (() => {
+    const list = [];
+
+    const getList = (() => {
+        return list;
+    })
+
+    const getProject = ((name) => {
+        const project = list.find(projNow => projNow.name === name)
+        return project;
+    })
+
+    const addProject = ((project) => {
+        list.push(project);
+    })
+
+    const removeProject = ((project) => {
+        const index = list.indexOf(project);
+        if (index > -1) list.splice(index, 1);
+    })
+
+    return {getList, getProject, addProject, removeProject}
+})()
+
+export {Project, projectList};

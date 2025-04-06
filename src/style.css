@@ -1,0 +1,86 @@
+:root {
+    --pad: 20px;
+    --blue: rgb(170, 230, 250);
+    --blue-hover: rgb(150, 210, 250);
+}
+
+html, body {
+    font-family: Helvetica, sans-serif;
+    height: 100%;
+    margin: 0;
+    display: flex;
+}
+
+nav {
+    height: 100%;
+    width: 15rem;
+    padding: var(--pad);
+    background-color: var(--blue);
+}
+
+div.projects {
+    margin-top: 20px;
+}
+
+div.project {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+div.project > span {
+    padding: 10px;
+    width: 80%;
+    border-radius: 10px;
+}
+
+div.project > span:hover {
+    background-color: var(--blue-hover);
+    cursor: pointer;
+}
+
+img.delete {
+    width: 20px;
+    cursor: pointer;
+}
+
+img.delete:hover {
+    width: 22px;
+}
+
+div.content-tasks {
+    padding: var(--pad);
+}
+
+div.task {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+form {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 20em;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: gray;
+}
+
+form > input {
+    flex: 1;
+}
+
+div.card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 20em;
+    height: 10em;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: gray;
+}

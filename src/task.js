@@ -1,10 +1,10 @@
-export default class TodoList {
-    constructor(title, description, dueDate, priority, checklist) {
+export default class Task {
+    constructor(title, description, dueDate, priority, checkbox) {
         this._title = title;
         this._description = description;
         this._dueDate = dueDate;
         this._priority = priority;
-        this._checklist = checklist;
+        this._checkbox = checkbox;
         //this.notes = notes;
     }
 
@@ -40,8 +40,8 @@ export default class TodoList {
         this._priority = priorityNew;
     }
 
-    toggleChecklist() {
-        if(this._checklist) this._checklist = false;
-        else this._checklist = true;
+    toggleCheckbox() {
+        if(this._checkbox) this._checkbox = false;
+        else this._checkbox = true;
     }
 }
