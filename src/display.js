@@ -170,6 +170,7 @@ export default (() => {
         };
 
         projects.appendChild(newProject);
+        addProjectTaskNumber(project);
     })
 
     const showProjects = (() => {
@@ -189,6 +190,7 @@ export default (() => {
 
     const deleteProject = ((project, currentProject) => {
         projectList.removeProject(project);
+        storage.deleteProject(project);
         if (project === currentProject) {
             displayProject(projectList.getList()[0]);
             selectProject(document.querySelector("span"));
@@ -292,6 +294,10 @@ export default (() => {
             projectCurrent.removeTask(task);
             addProjectTaskNumber(inbox);
             addProjectTaskNumber(projectCurrent);
+            
+            // Update Storage
+            storage.deleteTask(task, inbox);
+            storage.deleteTask(task, projectCurrent);
             return
         }
 
@@ -299,6 +305,9 @@ export default (() => {
             if (project.getTasks().find(item => item === task)) {
                 project.removeTask(task);
                 addProjectTaskNumber(project);
+
+                // Update storage
+                storage.deleteTask(task, project);
             }
         }
     })
