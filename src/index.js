@@ -1,41 +1,53 @@
 import "./style.css"
-import {Project} from "./project.js";
+import {Project, projectList} from "./project.js";
 import Task from "./task.js";
 import display from "./display.js";
+import storage from "./storage.js";
 
-// Create an inbox that stores all todos
-const projInbox = new Project("Inbox");
-display.addProjectNav(projInbox);
 
-// Create a project for today todos
-const projToday = new Project("Today");
-display.addProjectNav(projToday);
+// Add all the default projects and tasks if local storage is empty
+if (localStorage.length === 0) {
+    // Create an inbox that stores all todos
+    const projInbox = new Project("Inbox", "f75cf5fd-1291-4d64-aff2-eef12202ce35");
 
-// Create a project for week todos
-const projWeek = new Project("Week");
-display.addProjectNav(projWeek);
+    // Create a project for today todos
+    const projToday = new Project("Today", "ad2b4ab8-8b91-4b2d-8d0e-8187850c9684");
 
-// Create random project
-const projRandom = new Project("Random");
-display.addProjectNav(projRandom);
+    // Create a project for week todos
+    const projWeek = new Project("Week", "98a30ae2-ce41-454b-83c4-49bfc805cb37");
 
-// New random tasks
-const taskOne = new Task("Do something", "Something and another thing", "06-05-2025", "medium", false);
-taskOne.title = "Do this task";
-taskOne.toggleCheckbox();
+    // Create random project
+    const projRandom = new Project("Random", "a9e0fedf-be17-430e-af62-7ccc459532af");
 
-const taskTwo = new Task("Do another thing", "Something important probably", "07-04-2025", "high", false);
+    projectList.addProject(projInbox);
+    projectList.addProject(projToday);
+    projectList.addProject(projWeek);
+    projectList.addProject(projRandom);
 
-projInbox.addTask(taskOne);
-projToday.addTask(taskOne);
+    // New random tasks
+    const taskOne = new Task("Do something", "Something and another thing", "06-05-2025", "medium", false);
+    const taskTwo = new Task("Do another thing", "Something important probably", "07-04-2025", "high", true);
 
-projInbox.addTask(taskTwo);
-projWeek.addTask(taskTwo);
+    projInbox.addTask(taskOne);
+    projToday.addTask(taskOne);
+    projInbox.addTask(taskTwo);
+    projWeek.addTask(taskTwo);
 
-display.addProjectTaskNumber(projInbox);
-display.addProjectTaskNumber(projToday);
-display.addProjectTaskNumber(projWeek);
+    storage.saveProject(projInbox);
+    storage.saveProject(projToday);
+    storage.saveProject(projWeek);
+    storage.saveProject(projRandom);
 
-display.displayProject(projInbox);
-const inbox = document.querySelector("span");
-inbox.classList.toggle("selected");
+    storage.saveTask(projInbox, taskOne);
+    storage.saveTask(projToday, taskOne);
+    storage.saveTask(projInbox, taskTwo);
+    storage.saveTask(projWeek, taskTwo);
+    
+} else {
+    storage.getStorage();
+}
+
+const inbox = projectList.getProject("f75cf5fd-1291-4d64-aff2-eef12202ce35");
+display.showProjects();
+display.displayProject(inbox);
+display.selectProject(document.querySelector("span"))

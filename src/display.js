@@ -3,6 +3,7 @@ import Task from "./task.js";
 import deleteImg from "./images/delete.svg";
 import closeImg from "./images/close.svg";
 import { differenceInDays, startOfToday, parse} from "date-fns";
+import storage from "./storage.js";
 
 export default (() => {
 
@@ -109,6 +110,9 @@ export default (() => {
             // Check if the form isn't empty
             if (value) {         
                 const project = new Project(value);
+                projectList.addProject(project);
+                // Local Storage
+                storage.saveProject(project);
                 addProjectNav(project);
             }
             newForm.remove();
@@ -131,8 +135,6 @@ export default (() => {
     })
 
     const addProjectNav = ((project) => {
-        projectList.addProject(project);
-
         const projects = document.querySelector("div.projects");
         const newProject = document.createElement("div");
         newProject.classList = "project";
@@ -160,7 +162,7 @@ export default (() => {
             deleteBtn.classList = "delete";
             deleteBtn.src=deleteImg;
             deleteBtn.addEventListener("click", () => {
-                deleteProject(project);
+                deleteProject(project, getCurrentProject());
                 newProject.remove();
                 deleteBtn.remove();
             });
@@ -168,6 +170,13 @@ export default (() => {
         };
 
         projects.appendChild(newProject);
+    })
+
+    const showProjects = (() => {
+        for (const project of projectList.getList()) {
+            addProjectNav(project);
+            addProjectTaskNumber(project);
+        }
     })
 
     const selectProject = ((project) => {
@@ -178,9 +187,12 @@ export default (() => {
         project.classList.toggle("selected");
     })
 
-    const deleteProject = ((project) => {
+    const deleteProject = ((project, currentProject) => {
         projectList.removeProject(project);
-        displayProject(projectList.getList()[0]);
+        if (project === currentProject) {
+            displayProject(projectList.getList()[0]);
+            selectProject(document.querySelector("span"));
+        }
     })
 
     const getCurrentProject = (() => {
@@ -246,6 +258,9 @@ export default (() => {
         const inbox = projectList.getList()[0];
         inbox.addTask(task);
         addProjectTaskNumber(inbox);
+
+        // Local Storage
+        storage.saveTask(inbox, task);
         
         if (scope === "global") {
             const displayedProject = document.querySelector(`[data-id="${inbox._id}"]`);
@@ -258,6 +273,10 @@ export default (() => {
         if (projectCurrent !== inbox) {
             projectCurrent.addTask(task);
             addProjectTaskNumber(projectCurrent);
+            
+            // Local Storage
+            storage.saveTask(projectCurrent, task);
+            
             displayProject(projectCurrent);
         } else {
             displayProject(inbox);
@@ -317,7 +336,7 @@ export default (() => {
         details.appendChild(title)
 
         const today = startOfToday();
-        const date = differenceInDays(task.dueDate, today);
+        const date = differenceInDays(new Date(task.dueDate), today);
         const dueDate = addPropertyShowTask("Due Date:", date + " days");
         details.appendChild(dueDate);
 
@@ -371,5 +390,5 @@ export default (() => {
         return newForm;
     })
 
-    return {addProjectNav, displayProject, addProjectTaskNumber};
+    return {displayProject, addProjectTaskNumber, showProjects, selectProject};
 })();

@@ -1,10 +1,10 @@
 import {v4 as uuid4} from "uuid";
 
 class Project {
-    constructor(name) {
-        this._id = uuid4();
+    constructor(name, id = uuid4(), tasks = []) {
+        this._id = id;
         this._name = name;
-        this._tasks = [];
+        this._tasks = tasks;
     }
 
     get name() {
@@ -22,6 +22,14 @@ class Project {
     removeTask(todo) {
         const index = this._tasks.indexOf(todo);
         if (index > -1) this._tasks.splice(index, 1);
+    }
+
+    getTask(task) {
+        for (const key of Object.keys(this._tasks)) {
+            if (task === this._tasks[key]._id) {
+                return this._tasks[key]
+            }
+        }
     }
 
     getTasks() {
